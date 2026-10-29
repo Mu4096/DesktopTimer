@@ -1,0 +1,34 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <!-- タスクトレイの NotifyIcon 用 -->
+    <UseWindowsForms>true</UseWindowsForms>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <!-- WFO0003 は WinForms アプリ向けの警告。WPF では DPI 認識を manifest で宣言するのが正しいため抑制する -->
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- WPF と型名が衝突するため、WinForms 系の暗黙 using は外す（必要な箇所で明示的に参照する） -->
+    <Using Remove="System.Windows.Forms" />
+    <Using Remove="System.Drawing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="NAudio" Version="3.1.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- 音源ファイルが使えないときの代替ビープ（1kHz のピッ×3回＋無音、約1秒・22.05kHz/16bit/モノラル） -->
+    <EmbeddedResource Include="Assets\beep.wav" LogicalName="DesktopTimer.Assets.beep.wav" />
+    <!-- タスクトレイのアイコン（exe のアイコンと共通。16〜64px は BMP、256px は PNG で格納） -->
+    <EmbeddedResource Include="Assets\app.ico" LogicalName="DesktopTimer.Assets.app.ico" />
+  </ItemGroup>
+
+</Project>

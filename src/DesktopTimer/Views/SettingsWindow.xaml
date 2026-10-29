@@ -1,0 +1,428 @@
+<Window x:Class="DesktopTimer.Views.SettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="clr-namespace:DesktopTimer.ViewModels"
+        xmlns:m="clr-namespace:DesktopTimer.Models"
+        xmlns:v="clr-namespace:DesktopTimer.Views"
+        mc:Ignorable="d"
+        d:DataContext="{d:DesignInstance Type=vm:SettingsViewModel}"
+        Title="DesktopTimer の設定"
+        Width="800"
+        SizeToContent="Height"
+        MaxHeight="{Binding Source={x:Static SystemParameters.WorkArea}, Path=Height}"
+        ResizeMode="CanMinimize"
+        WindowStartupLocation="CenterScreen"
+        UseLayoutRounding="True"
+        Background="{StaticResource SurfaceBaseBrush}"
+        Foreground="{StaticResource TextBrush}"
+        FontFamily="{StaticResource UiFont}"
+        FontSize="13">
+
+    <Window.Resources>
+        <BooleanToVisibilityConverter x:Key="BoolToVisibility" />
+        <Style x:Key="LabelStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Margin" Value="0,0,12,0" />
+        </Style>
+        <Style x:Key="HintStyle" TargetType="TextBlock">
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="Foreground" Value="{StaticResource SubTextBrush}" />
+            <Setter Property="FontSize" Value="12" />
+            <Setter Property="Margin" Value="8,0,0,0" />
+        </Style>
+        <!-- スライダーの右に出す現在値 -->
+        <Style x:Key="ValueStyle" TargetType="TextBlock">
+            <Setter Property="Width" Value="48" />
+            <Setter Property="TextAlignment" Value="Right" />
+            <Setter Property="VerticalAlignment" Value="Center" />
+            <Setter Property="FontFamily" Value="{StaticResource DigitFont}" />
+            <Setter Property="FontSize" Value="14" />
+            <Setter Property="Foreground" Value="{StaticResource AccentBrightBrush}" />
+        </Style>
+        <!-- 数値入力。範囲外の入力はピンクの枠になり、ツールチップで理由を表示する -->
+        <Style x:Key="NumberBoxStyle" TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+            <Setter Property="Width" Value="64" />
+            <Setter Property="HorizontalContentAlignment" Value="Right" />
+            <Setter Property="FontFamily" Value="{StaticResource DigitFont}" />
+            <Setter Property="FontSize" Value="15" />
+            <Style.Triggers>
+                <Trigger Property="Validation.HasError" Value="True">
+                    <Setter Property="ToolTip"
+                            Value="{Binding RelativeSource={RelativeSource Self}, Path=(Validation.Errors)[0].ErrorContent}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+        <!-- カード内の区切り線 -->
+        <Style x:Key="DividerStyle" TargetType="Border">
+            <Setter Property="Height" Value="1" />
+            <Setter Property="Background" Value="{StaticResource StrokeBrush}" />
+            <Setter Property="Margin" Value="0,12" />
+        </Style>
+    </Window.Resources>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Focusable="False">
+        <StackPanel Margin="24,20,24,10">
+
+            <!-- 見出し -->
+            <DockPanel Margin="2,0,2,18">
+                <Border DockPanel.Dock="Left" Width="40" Height="40" CornerRadius="4" Margin="0,0,12,0"
+                        Background="{StaticResource AccentFillBrush}">
+                    <TextBlock Text="&#xE916;" FontFamily="{StaticResource IconFont}" FontSize="20"
+                               Foreground="{StaticResource OnAccentTextBrush}"
+                               HorizontalAlignment="Center" VerticalAlignment="Center" />
+                </Border>
+                <TextBlock DockPanel.Dock="Right" VerticalAlignment="Bottom" Margin="0,0,0,2"
+                           Text="変更はすぐに反映・保存されます" Foreground="{StaticResource SubTextBrush}" FontSize="12" />
+                <StackPanel VerticalAlignment="Center">
+                    <TextBlock Text="DesktopTimer" FontFamily="{StaticResource DigitFont}" FontSize="22" FontWeight="SemiBold" />
+                    <TextBlock Text="設定" Foreground="{StaticResource AccentBrightBrush}" FontSize="12" FontWeight="SemiBold"
+                               Margin="1,-2,0,0" />
+                </StackPanel>
+            </DockPanel>
+
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="14" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- ===== 左の列 ===== -->
+                <StackPanel Grid.Column="0">
+
+                    <!-- タイマー -->
+                    <HeaderedContentControl Style="{StaticResource CardStyle}" Header="タイマー" Tag="&#xE916;">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="96" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" />
+                                <RowDefinition Height="8" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="プリセット 1" Style="{StaticResource LabelStyle}" />
+                            <TextBox Grid.Row="0" Grid.Column="1" Style="{StaticResource NumberBoxStyle}">
+                                <TextBox.Text>
+                                    <Binding Path="Settings.Preset1Minutes" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <v:IntRangeRule Min="{x:Static m:AppSettings.PresetMinutesMin}"
+                                                            Max="{x:Static m:AppSettings.PresetMinutesMax}" />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBlock Grid.Row="0" Grid.Column="2" Text="分" VerticalAlignment="Center" Margin="8,0,0,0" />
+                            <TextBlock Grid.Row="0" Grid.Column="3" Grid.RowSpan="3" Text="1〜180 分" Style="{StaticResource HintStyle}"
+                                       HorizontalAlignment="Right" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="プリセット 2" Style="{StaticResource LabelStyle}" />
+                            <TextBox Grid.Row="2" Grid.Column="1" Style="{StaticResource NumberBoxStyle}">
+                                <TextBox.Text>
+                                    <Binding Path="Settings.Preset2Minutes" UpdateSourceTrigger="PropertyChanged">
+                                        <Binding.ValidationRules>
+                                            <v:IntRangeRule Min="{x:Static m:AppSettings.PresetMinutesMin}"
+                                                            Max="{x:Static m:AppSettings.PresetMinutesMax}" />
+                                        </Binding.ValidationRules>
+                                    </Binding>
+                                </TextBox.Text>
+                            </TextBox>
+                            <TextBlock Grid.Row="2" Grid.Column="2" Text="分" VerticalAlignment="Center" Margin="8,0,0,0" />
+                        </Grid>
+                    </HeaderedContentControl>
+
+                    <!-- ホットキー -->
+                    <HeaderedContentControl Style="{StaticResource CardStyle}" Header="ホットキー" Tag="&#xE765;">
+                        <StackPanel>
+                            <ItemsControl ItemsSource="{Binding Hotkeys}" Focusable="False">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:HotkeyItemViewModel}">
+                                        <StackPanel Margin="0,0,0,8">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="*" />
+                                                    <ColumnDefinition Width="200" />
+                                                </Grid.ColumnDefinitions>
+                                                <TextBlock Text="{Binding Label}" Style="{StaticResource LabelStyle}" />
+                                                <!-- クリックで受付開始 → キーを押すと登録して受付終了。Esc で取り消し、Delete / Backspace で割り当てなし -->
+                                                <TextBox Grid.Column="1" Text="{Binding DisplayText, Mode=OneWay}" IsReadOnly="True"
+                                                         IsReadOnlyCaretVisible="False" Cursor="Hand"
+                                                         HorizontalContentAlignment="Center"
+                                                         InputMethod.IsInputMethodEnabled="False"
+                                                         PreviewKeyDown="HotkeyBox_PreviewKeyDown"
+                                                         GotKeyboardFocus="HotkeyBox_GotKeyboardFocus"
+                                                         LostKeyboardFocus="HotkeyBox_LostKeyboardFocus">
+                                                    <TextBox.Style>
+                                                        <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+                                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                                            <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
+                                                            <Style.Triggers>
+                                                                <!-- 受付中であることが一目で分かるように色を変える -->
+                                                                <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                                    <Setter Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                                                                    <Setter Property="Foreground" Value="{StaticResource TextBrush}" />
+                                                                    <Setter Property="FontWeight" Value="Normal" />
+                                                                    <Setter Property="FontSize" Value="11.5" />
+                                                                </DataTrigger>
+                                                                <!-- 登録できていないキーはピンク -->
+                                                                <DataTrigger Binding="{Binding HasWarning}" Value="True">
+                                                                    <Setter Property="BorderBrush" Value="{StaticResource WarningBrush}" />
+                                                                    <Setter Property="Foreground" Value="{StaticResource WarningBrush}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBox.Style>
+                                                </TextBox>
+                                            </Grid>
+                                            <StackPanel Orientation="Horizontal" Margin="0,5,0,0" HorizontalAlignment="Right"
+                                                        Visibility="{Binding HasWarning, Converter={StaticResource BoolToVisibility}}">
+                                                <TextBlock Text="&#xE7BA;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                                                           Foreground="{StaticResource WarningBrush}" VerticalAlignment="Top"
+                                                           Margin="0,2,6,0" />
+                                                <TextBlock Text="{Binding WarningText}" Foreground="{StaticResource WarningBrush}"
+                                                           FontSize="12" TextWrapping="Wrap" MaxWidth="290" />
+                                            </StackPanel>
+                                        </StackPanel>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                            <TextBlock Text="入力欄をクリックしてから、割り当てたいキーを押してください（Ctrl / Alt / Win との組み合わせ、または F1〜F24）。Esc で取り消し、Delete で割り当てを解除します。"
+                                       Style="{StaticResource HintStyle}" Margin="0,4,0,0" TextWrapping="Wrap" LineHeight="18" />
+                        </StackPanel>
+                    </HeaderedContentControl>
+
+                    <!-- 表示 -->
+                    <HeaderedContentControl Style="{StaticResource CardStyle}" Header="表示" Tag="&#xE7F4;">
+                        <StackPanel>
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="80" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="6" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <!-- タイマー右下のハンドルと同じ値を共有する -->
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="サイズ" Style="{StaticResource LabelStyle}" />
+                                <Slider Grid.Row="0" Grid.Column="1" VerticalAlignment="Center" Minimum="50" Maximum="300"
+                                        Value="{Binding Settings.ScalePercent}" IsSnapToTickEnabled="True" TickFrequency="1"
+                                        SmallChange="1" LargeChange="10" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource ValueStyle}"
+                                           Text="{Binding Settings.ScalePercent, StringFormat={}{0}%}" />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="不透明度" Style="{StaticResource LabelStyle}" />
+                                <Slider Grid.Row="2" Grid.Column="1" VerticalAlignment="Center" Minimum="30" Maximum="100"
+                                        Value="{Binding Settings.OpacityPercent}" IsSnapToTickEnabled="True" TickFrequency="1"
+                                        SmallChange="1" LargeChange="10" />
+                                <TextBlock Grid.Row="2" Grid.Column="2" Style="{StaticResource ValueStyle}"
+                                           Text="{Binding Settings.OpacityPercent, StringFormat={}{0}%}" />
+                            </Grid>
+
+                            <Border Style="{StaticResource DividerStyle}" />
+
+                            <DockPanel>
+                                <TextBlock DockPanel.Dock="Left" Text="警告色" Style="{StaticResource LabelStyle}" Width="68" />
+                                <!-- 上のスライダーと揃える（ラベル 68 ＋余白 12 ＝ 80） -->
+                                <TextBlock DockPanel.Dock="Left" Text="残り" VerticalAlignment="Center" Margin="0,0,8,0" />
+                                <TextBox DockPanel.Dock="Left" Style="{StaticResource NumberBoxStyle}">
+                                    <TextBox.Text>
+                                        <Binding Path="Settings.WarningMinutes" UpdateSourceTrigger="PropertyChanged">
+                                            <Binding.ValidationRules>
+                                                <v:IntRangeRule Min="{x:Static m:AppSettings.WarningMinutesMin}"
+                                                                Max="{x:Static m:AppSettings.WarningMinutesMax}" />
+                                            </Binding.ValidationRules>
+                                        </Binding>
+                                    </TextBox.Text>
+                                </TextBox>
+                                <TextBlock Text="分以下でピンクにする" VerticalAlignment="Center" Margin="8,0,0,0" />
+                            </DockPanel>
+                            <TextBlock Text="0〜10 分。0 にすると色を変えません" Style="{StaticResource HintStyle}" Margin="80,6,0,0" />
+
+                            <Border Style="{StaticResource DividerStyle}" />
+
+                            <CheckBox Content="全画面のアプリ（動画・ゲームなど）の表示中はタイマーを隠す"
+                                      IsChecked="{Binding Settings.HideOnFullscreen}" />
+                        </StackPanel>
+                    </HeaderedContentControl>
+                </StackPanel>
+
+                <!-- ===== 右の列 ===== -->
+                <StackPanel Grid.Column="2">
+
+                    <!-- タイムアップ音 -->
+                    <HeaderedContentControl Style="{StaticResource CardStyle}" Header="タイムアップ音" Tag="&#xE767;">
+                        <StackPanel>
+                            <Border CornerRadius="4" BorderThickness="1" BorderBrush="{StaticResource StrokeBrush}"
+                                    Background="{StaticResource SurfaceSunkenBrush}" Padding="4">
+                                <ListBox x:Name="SoundList" ItemsSource="{Binding Sounds}" SelectedValuePath="Id"
+                                         SelectedValue="{Binding Settings.SoundId}"
+                                         Height="196" HorizontalContentAlignment="Stretch"
+                                         Background="Transparent" BorderThickness="0"
+                                         Foreground="{StaticResource TextBrush}"
+                                         ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                                    <ListBox.ItemContainerStyle>
+                                        <Style TargetType="ListBoxItem">
+                                            <Setter Property="FocusVisualStyle" Value="{x:Null}" />
+                                            <Setter Property="Cursor" Value="Hand" />
+                                            <Setter Property="Template">
+                                                <Setter.Value>
+                                                    <ControlTemplate TargetType="ListBoxItem">
+                                                        <Border x:Name="Bd" Background="Transparent" CornerRadius="2"
+                                                                Padding="6,3,4,3" Margin="0,1">
+                                                            <ContentPresenter />
+                                                        </Border>
+                                                        <ControlTemplate.Triggers>
+                                                            <Trigger Property="IsMouseOver" Value="True">
+                                                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource SurfaceRaisedBrush}" />
+                                                            </Trigger>
+                                                            <Trigger Property="IsSelected" Value="True">
+                                                                <Setter TargetName="Bd" Property="Background" Value="{StaticResource AccentSoftBrush}" />
+                                                            </Trigger>
+                                                        </ControlTemplate.Triggers>
+                                                    </ControlTemplate>
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Style>
+                                    </ListBox.ItemContainerStyle>
+                                    <ListBox.ItemTemplate>
+                                        <DataTemplate DataType="{x:Type vm:SoundItemViewModel}">
+                                            <DockPanel>
+                                                <!-- 試聴 / 停止 -->
+                                                <Button DockPanel.Dock="Right" Command="{Binding PreviewCommand}"
+                                                        ToolTip="{Binding PreviewLabel}">
+                                                    <Button.Style>
+                                                        <Style TargetType="Button" BasedOn="{StaticResource IconButtonStyle}">
+                                                            <Setter Property="Content" Value="&#xE768;" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsPreviewing}" Value="True">
+                                                                    <Setter Property="Content" Value="&#xE71A;" />
+                                                                    <Setter Property="Foreground" Value="{StaticResource OnAccentTextBrush}" />
+                                                                    <Setter Property="Background" Value="{StaticResource AccentBrush}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </Button.Style>
+                                                </Button>
+                                                <!-- 削除はユーザーが追加した音源のみ -->
+                                                <Button DockPanel.Dock="Right" Style="{StaticResource DangerIconButtonStyle}"
+                                                        Content="&#xE74D;" ToolTip="削除" Margin="0,0,2,0"
+                                                        Click="DeleteSoundButton_Click"
+                                                        Visibility="{Binding IsDeletable, Converter={StaticResource BoolToVisibility}}" />
+                                                <!-- 選択中の音源に印を付ける（フォーカスが無いと選択行の色が薄く分かりにくいため） -->
+                                                <TextBlock DockPanel.Dock="Left" Text="&#xE73E;" FontFamily="{StaticResource IconFont}"
+                                                           FontSize="12" Width="22" VerticalAlignment="Center"
+                                                           Foreground="{StaticResource AccentBrightBrush}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Hidden" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                             Value="True">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                                <TextBlock Text="{Binding DisplayName}" VerticalAlignment="Center" TextTrimming="CharacterEllipsis"
+                                                           ToolTip="{Binding DisplayName}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}"
+                                                                             Value="True">
+                                                                    <Setter Property="Foreground" Value="{StaticResource AccentLightBrush}" />
+                                                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </DockPanel>
+                                        </DataTemplate>
+                                    </ListBox.ItemTemplate>
+                                </ListBox>
+                            </Border>
+                            <DockPanel Margin="0,10,0,0">
+                                <Button DockPanel.Dock="Left" Click="AddSoundButton_Click" Padding="12,6">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="&#xE710;" FontFamily="{StaticResource IconFont}" FontSize="11"
+                                                   VerticalAlignment="Center" Margin="0,0,6,0" Foreground="{StaticResource AccentBrightBrush}" />
+                                        <TextBlock Text="追加..." />
+                                    </StackPanel>
+                                </Button>
+                                <TextBlock Text="wav / mp3 ファイルを追加できます" Style="{StaticResource HintStyle}" Margin="10,0,0,0" />
+                            </DockPanel>
+
+                            <Border Style="{StaticResource DividerStyle}" Margin="0,14,0,10" />
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="96" />
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="8" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
+
+                                <TextBlock Grid.Row="0" Grid.Column="0" Text="音量" Style="{StaticResource LabelStyle}" />
+                                <Slider Grid.Row="0" Grid.Column="1" VerticalAlignment="Center"
+                                        Minimum="0" Maximum="100"
+                                        Value="{Binding Settings.VolumePercent}" IsSnapToTickEnabled="True" TickFrequency="1"
+                                        SmallChange="1" LargeChange="10" />
+                                <TextBlock Grid.Row="0" Grid.Column="2" Style="{StaticResource ValueStyle}"
+                                           Text="{Binding Settings.VolumePercent, StringFormat={}{0}%}" />
+
+                                <TextBlock Grid.Row="2" Grid.Column="0" Text="音の自動停止" Style="{StaticResource LabelStyle}" />
+                                <StackPanel Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2" Orientation="Horizontal">
+                                    <TextBox Style="{StaticResource NumberBoxStyle}">
+                                        <TextBox.Text>
+                                            <Binding Path="Settings.AutoStopSeconds" UpdateSourceTrigger="PropertyChanged">
+                                                <Binding.ValidationRules>
+                                                    <v:IntRangeRule Min="{x:Static m:AppSettings.AutoStopSecondsMin}"
+                                                                    Max="{x:Static m:AppSettings.AutoStopSecondsMax}" />
+                                                </Binding.ValidationRules>
+                                            </Binding>
+                                        </TextBox.Text>
+                                    </TextBox>
+                                    <TextBlock Text="秒後" VerticalAlignment="Center" Margin="8,0,0,0" />
+                                    <TextBlock Text="（5〜600）" Style="{StaticResource HintStyle}" Margin="4,0,0,0" />
+                                </StackPanel>
+                            </Grid>
+
+                            <Border Style="{StaticResource DividerStyle}" />
+
+                            <CheckBox Content="タイムアップ時に通知を表示する" IsChecked="{Binding Settings.ToastEnabled}" />
+                        </StackPanel>
+                    </HeaderedContentControl>
+
+                    <!-- 起動 -->
+                    <HeaderedContentControl Style="{StaticResource CardStyle}" Header="起動" Tag="&#xE7E8;">
+                        <CheckBox Content="Windows の起動時に自動で起動する" IsChecked="{Binding Settings.AutoStart}" />
+                    </HeaderedContentControl>
+
+                    <Button HorizontalAlignment="Right" Click="ResetButton_Click" Margin="0,2,0,0">
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="&#xE777;" FontFamily="{StaticResource IconFont}" FontSize="12"
+                                       VerticalAlignment="Center" Margin="0,0,8,0" Foreground="{StaticResource SubTextBrush}" />
+                            <TextBlock Text="すべてデフォルトに戻す" />
+                        </StackPanel>
+                    </Button>
+                </StackPanel>
+            </Grid>
+        </StackPanel>
+    </ScrollViewer>
+</Window>

@@ -1,0 +1,72 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+
+    <!--
+        配色・フォントの定義（アプリ全体で共通）。
+        初音ミクのイメージカラー（ティール #39C5BB）を主役に、衣装のグレーを下地、アクセントのピンクを警告色に使う。
+    -->
+
+    <!-- ===== 色 ===== -->
+    <!-- ティール（主役の色）。明るい順に並べる -->
+    <Color x:Key="MikuTealLightColor">#FF86E3DA</Color>
+    <Color x:Key="MikuTealBrightColor">#FF4FD8CC</Color>
+    <Color x:Key="MikuTealColor">#FF39C5BB</Color>
+    <Color x:Key="MikuTealDeepColor">#FF1E9E95</Color>
+    <Color x:Key="MikuTealDarkColor">#FF137A7F</Color>
+    <!-- ピンク（残り時間が少ない時・タイムアップ時の警告色） -->
+    <Color x:Key="MikuPinkColor">#FFFF5AA5</Color>
+    <Color x:Key="MikuPinkDeepColor">#FFE12885</Color>
+
+    <!-- 下地（衣装のグレーを暗くしたもの）。暗い順 -->
+    <Color x:Key="SurfaceSunkenColor">#FF14181A</Color>
+    <Color x:Key="SurfaceBaseColor">#FF1A1E21</Color>
+    <Color x:Key="SurfaceCardColor">#FF23292C</Color>
+    <Color x:Key="SurfaceRaisedColor">#FF2C3337</Color>
+    <Color x:Key="SurfaceHoverColor">#FF323A3E</Color>
+    <Color x:Key="StrokeColor">#FF384246</Color>
+    <Color x:Key="StrokeStrongColor">#FF4B575C</Color>
+
+    <!-- 文字 -->
+    <Color x:Key="TextColor">#FFEEF4F5</Color>
+    <Color x:Key="SubTextColor">#FF9AABB3</Color>
+    <Color x:Key="MutedTextColor">#FF6B7B83</Color>
+    <!-- ティールの上に載せる文字（濃いティール寄りの黒） -->
+    <Color x:Key="OnAccentTextColor">#FF082826</Color>
+
+    <!-- ===== ブラシ ===== -->
+    <SolidColorBrush x:Key="AccentBrush" Color="{StaticResource MikuTealColor}" />
+    <SolidColorBrush x:Key="AccentBrightBrush" Color="{StaticResource MikuTealBrightColor}" />
+    <SolidColorBrush x:Key="AccentLightBrush" Color="{StaticResource MikuTealLightColor}" />
+    <SolidColorBrush x:Key="AccentDeepBrush" Color="{StaticResource MikuTealDeepColor}" />
+    <SolidColorBrush x:Key="AccentSoftBrush" Color="#2639C5BB" />
+    <SolidColorBrush x:Key="AccentFaintBrush" Color="#1439C5BB" />
+    <SolidColorBrush x:Key="WarningBrush" Color="{StaticResource MikuPinkColor}" />
+    <SolidColorBrush x:Key="WarningSoftBrush" Color="#26FF5AA5" />
+
+    <SolidColorBrush x:Key="SurfaceSunkenBrush" Color="{StaticResource SurfaceSunkenColor}" />
+    <SolidColorBrush x:Key="SurfaceBaseBrush" Color="{StaticResource SurfaceBaseColor}" />
+    <SolidColorBrush x:Key="SurfaceCardBrush" Color="{StaticResource SurfaceCardColor}" />
+    <SolidColorBrush x:Key="SurfaceRaisedBrush" Color="{StaticResource SurfaceRaisedColor}" />
+    <SolidColorBrush x:Key="SurfaceHoverBrush" Color="{StaticResource SurfaceHoverColor}" />
+    <SolidColorBrush x:Key="StrokeBrush" Color="{StaticResource StrokeColor}" />
+    <SolidColorBrush x:Key="StrokeStrongBrush" Color="{StaticResource StrokeStrongColor}" />
+
+    <SolidColorBrush x:Key="TextBrush" Color="{StaticResource TextColor}" />
+    <SolidColorBrush x:Key="SubTextBrush" Color="{StaticResource SubTextColor}" />
+    <SolidColorBrush x:Key="MutedTextBrush" Color="{StaticResource MutedTextColor}" />
+    <SolidColorBrush x:Key="OnAccentTextBrush" Color="{StaticResource OnAccentTextColor}" />
+
+    <!-- ティールの塗り（上が明るいグラデーション。設定画面の見出しアイコンなど） -->
+    <LinearGradientBrush x:Key="AccentFillBrush" StartPoint="0,0" EndPoint="0,1">
+        <GradientStop Offset="0" Color="#FF55DCD0" />
+        <GradientStop Offset="1" Color="#FF2DB5AB" />
+    </LinearGradientBrush>
+
+    <!-- ===== フォント ===== -->
+    <!-- 本文。英数字は Segoe UI Variable（無ければ Segoe UI）、日本語は Yu Gothic UI で表示される -->
+    <FontFamily x:Key="UiFont">Segoe UI Variable Text, Segoe UI, Yu Gothic UI</FontFamily>
+    <!-- 時間表示の数字。Bahnschrift（DIN 系）で、デジタル表示のような読みやすさを出す -->
+    <FontFamily x:Key="DigitFont">Bahnschrift, Segoe UI Variable Display, Segoe UI</FontFamily>
+    <FontFamily x:Key="IconFont">Segoe Fluent Icons, Segoe MDL2 Assets</FontFamily>
+
+</ResourceDictionary>
